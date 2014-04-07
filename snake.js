@@ -6,12 +6,21 @@ $(document).ready(function(){
   var height = $("#canvas").height();
 
   var cellWidth = 10;
-  var direction = "right";
+  var direction;
 
+  function initialize(){
+    direction = "right";
+    createSnake();
+    if(typeof gameLoop != "undefined"){
+      clearInterval(gameLoop);
+    }
+    gameLoop = setInterval(paint, 60);
+  }
+
+  initialize();
 
   //create snake
   var snakeArray;
-  createSnake();
   function createSnake(){
     var length = 5;
     snakeArray = [];
@@ -37,6 +46,7 @@ $(document).ready(function(){
     else if(direction == "down") headY++;
 
     if(headX == -1 || headX == width/cellWidth || headY == -1 || headY == height/cellWidth){
+      initialize();
       return;
     }
 
@@ -62,6 +72,6 @@ $(document).ready(function(){
     else if(key == "40" && direction != "up") direction = "down";
   })
 
-  gameLoop = setInterval(paint, 60);
+
 
 });
