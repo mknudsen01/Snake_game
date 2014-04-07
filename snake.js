@@ -36,6 +36,9 @@ $(document).ready(function(){
     else if(direction == "up") headY--;
     else if(direction == "down") headY++;
 
+    if(headX == -1 || headX == width/cellWidth || headY == -1 || headY == height/cellWidth){
+      return;
+    }
 
     var tail = snakeArray.pop();
     tail.x = headX; tail.y = headY;
@@ -57,7 +60,6 @@ $(document).ready(function(){
     else if(key == "38" && direction != "down") direction = "up";
     else if(key == "39" && direction != "left") direction = "right";
     else if(key == "40" && direction != "up") direction = "down";
-
   })
 
   gameLoop = setInterval(paint, 60);
