@@ -7,10 +7,12 @@ $(document).ready(function(){
 
   var cellWidth = 10;
   var direction;
+  var food;
 
   function initialize(){
     direction = "right";
     createSnake();
+    createFood();
     if(typeof gameLoop != "undefined"){
       clearInterval(gameLoop);
     }
@@ -29,6 +31,13 @@ $(document).ready(function(){
     }
   }
 
+  function createFood(){
+    food = {
+      x: Math.round(Math.random()*(width - cellWidth) / cellWidth),
+      y: Math.round(Math.random()*(height - cellWidth) / cellWidth),
+    };
+  }
+
   //paint snake
   function paint(){
     //create field
@@ -45,24 +54,45 @@ $(document).ready(function(){
     else if(direction == "up") headY--;
     else if(direction == "down") headY++;
 
-    if(headX == -1 || headX == width/cellWidth || headY == -1 || headY == height/cellWidth){
+    if(headX == -1 || headX == width/cellWidth || headY == -1 || headY == height/cellWidth || checkCollision(headX, headY, snakeArray)){
       initialize();
       return;
     }
 
-    var tail = snakeArray.pop();
-    tail.x = headX; tail.y = headY;
+    if(headX == food.x && headY == food.y){
+      var tail = {x: headX, y: headY};
+      createFood();
+    } else {
+      var tail = snakeArray.pop();
+      tail.x = headX; tail.y = headY;
+    }
+
     snakeArray.unshift(tail);
 
     for(var i=0; i<snakeArray.length; i++){
       var c = snakeArray[i];
-
-      ctx.fillStyle = "blue";
-      ctx.fillRect(c.x*cellWidth, c.y*cellWidth, cellWidth, cellWidth);
-      ctx.strokeStyle = "white";
-      ctx.strokeRect(c.x*cellWidth, c.y*cellWidth, cellWidth, cellWidth);
+      paintCell(c.x, c.y);
     }
+
+    paintCell(food.x, food.y);
   }
+
+  function paintCell(x,y){
+    ctx.fillStyle = "blue";
+    ctx.fillRect(x*cellWidth, y*cellWidth, cellWidth, cellWidth);
+    ctx.strokeStyle = "white";
+    ctx.strokeRect(x*cellWidth, y*cellWidth, cellWidth, cellWidth);
+  }
+
+  function checkCollision(x, y, cells){
+    for(var i=0; i < cells.length; i++){
+      if(cells[i].x == x && cells[i].y == y){
+        return true;
+      }
+    }
+    return false;
+  }
+
 
   $(document).keydown(function(e){
     var key = e.which;
@@ -70,7 +100,7 @@ $(document).ready(function(){
     else if(key == "38" && direction != "down") direction = "up";
     else if(key == "39" && direction != "left") direction = "right";
     else if(key == "40" && direction != "up") direction = "down";
-  })
+  });
 
 
 
