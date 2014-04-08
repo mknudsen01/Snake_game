@@ -7,10 +7,12 @@ $(document).ready(function(){
 
   var cellWidth = 10;
   var direction;
+  var food;
 
   function initialize(){
     direction = "right";
     createSnake();
+    createFood();
     if(typeof gameLoop != "undefined"){
       clearInterval(gameLoop);
     }
@@ -27,6 +29,13 @@ $(document).ready(function(){
     for(var i = length-1; i >= 0; i--){
       snakeArray.push({x:i, y:0});
     }
+  }
+
+  function createFood(){
+    food = {
+      x: Math.round(Math.random()*(width - cellWidth) / cellWidth),
+      y: Math.round(Math.random()*(height - cellWidth) / cellWidth),
+    };
   }
 
   //paint snake
@@ -50,19 +59,31 @@ $(document).ready(function(){
       return;
     }
 
-    var tail = snakeArray.pop();
-    tail.x = headX; tail.y = headY;
+    if(headX == food.x && headY == food.y){
+      var tail = {x: headX, y: headY};
+      createFood();
+    } else {
+      var tail = snakeArray.pop();
+      tail.x = headX; tail.y = headY;
+    }
+
     snakeArray.unshift(tail);
 
     for(var i=0; i<snakeArray.length; i++){
       var c = snakeArray[i];
-
-      ctx.fillStyle = "blue";
-      ctx.fillRect(c.x*cellWidth, c.y*cellWidth, cellWidth, cellWidth);
-      ctx.strokeStyle = "white";
-      ctx.strokeRect(c.x*cellWidth, c.y*cellWidth, cellWidth, cellWidth);
+      paintCell(c.x, c.y);
     }
+
+    paintCell(food.x, food.y);
   }
+
+  function paintCell(x,y){
+    ctx.fillStyle = "blue";
+    ctx.fillRect(x*cellWidth, y*cellWidth, cellWidth, cellWidth);
+    ctx.strokeStyle = "white";
+    ctx.strokeRect(x*cellWidth, y*cellWidth, cellWidth, cellWidth);
+  }
+
 
   $(document).keydown(function(e){
     var key = e.which;
