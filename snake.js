@@ -8,11 +8,13 @@ $(document).ready(function(){
   var cellWidth = 10;
   var direction;
   var food;
+  var score;
 
   function initialize(){
     direction = "right";
     createSnake();
     createFood();
+    score = 0;
     if(typeof gameLoop != "undefined"){
       clearInterval(gameLoop);
     }
@@ -61,6 +63,7 @@ $(document).ready(function(){
 
     if(headX == food.x && headY == food.y){
       var tail = {x: headX, y: headY};
+      score++;
       createFood();
     } else {
       var tail = snakeArray.pop();
@@ -75,6 +78,9 @@ $(document).ready(function(){
     }
 
     paintCell(food.x, food.y);
+
+    var scoreText = "Score: " + score;
+    ctx.fillText(scoreText,5,height-5);
   }
 
   function paintCell(x,y){
